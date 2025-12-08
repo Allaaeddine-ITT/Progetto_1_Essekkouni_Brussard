@@ -24,14 +24,10 @@ to provide:
 * **(Frontend)** [Leaflet.js](https://leafletjs.com/) (OPTIONAL)
 
 ## Expected pages:
-### 1️⃣ Home Page – Ricerca Città
 
-* Search Bar
-* Recomended cities by Nominatim
-* City Selection → Meteo Page
 
-### 2️⃣ Pagina Meteo – Dettagli Città
-
+###  Pagina Meteo – Dettagli Città
+* Serch box 
 * City + State Name
 * Current Weather
 * Current Temperature
@@ -39,7 +35,7 @@ to provide:
 * Map (Leaflet con OpenStreetMap)
 * Button “Aggiungi ai preferiti”
 
-### 3️⃣ Pagina Preferiti – CRUD
+###  Pagina Preferiti – CRUD
 
 * Saved City List
 * Rapid Meteo widget
