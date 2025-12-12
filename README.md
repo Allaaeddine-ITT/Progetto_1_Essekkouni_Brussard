@@ -1,4 +1,4 @@
-### Essekkouni - Brussard - Prog. 2 - _ITT TERNI_
+### Essekkouni - _ITT TERNI_
 # Weather Forecast App
 ## Project Mission:
 Development of a web application built in <b>[ReactJS + MaterialUI](https://react.dev/) </b> that
@@ -35,8 +35,6 @@ to provide:
 * Map (Leaflet con OpenStreetMap)
 * Button “Aggiungi ai preferiti”
 
-###  Pagina Preferiti – CRUD
+###  Pagina Preferiti 
 
 * Saved City List
-* Rapid Meteo widget
-* "Delete City" Button
