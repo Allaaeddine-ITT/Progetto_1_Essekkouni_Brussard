@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getCityCoords } from "../api/nominatim.api";
-import { getWeatherData } from "../api/openMeteo.api";
+import { getCityCoords } from "../api/nominatim.api.js";
+import { getWeatherData } from "../api/openMeteo.api.js";
 
 export default function useWeather(city) {
   const [coords, setCoords] = useState(null);
@@ -16,11 +16,11 @@ export default function useWeather(city) {
       setError(null);
 
       try {
-        // 1️⃣ Coordinate città
+    
         const cityCoords = await getCityCoords(city);
         setCoords(cityCoords);
 
-        // 2️⃣ Meteo
+        
         const weatherData = await getWeatherData(
           cityCoords.lat,
           cityCoords.lon
