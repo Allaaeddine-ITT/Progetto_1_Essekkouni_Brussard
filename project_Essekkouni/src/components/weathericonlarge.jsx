@@ -2,14 +2,12 @@ import { Box } from "@mui/material";
 import { getWeatherIcon } from "../utils/weathericon";
 
 export default function WeatherIconLarge({ weather }) {
-  if (!weather) return null;
+  if (!weather?.current) return null;
 
-  const code =
-    weather?.current_weather?.weathercode ??
-    weather?.current?.weathercode ??
-    weather?.current?.weather_code;
+  // ⚠️ prende il codice GIUSTO creato dal tuo hook
+  const code = weather.current.weatherCode;
 
-  const Icon = getWeatherIcon(Number(code));
+  const Icon = getWeatherIcon(code);
 
   return (
     <Box
@@ -22,8 +20,8 @@ export default function WeatherIconLarge({ weather }) {
     >
       <Icon
         sx={{
-          fontSize: 250, 
-          color: "#f5c542", 
+          fontSize: 250,
+          color: "#ffffffff",
         }}
       />
     </Box>

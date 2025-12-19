@@ -36,7 +36,8 @@ function mapWeatherToUI(api, location) {
     windMax: dailySrc.wind_speed_10m_max?.[i] ?? null,
     precipProb: dailySrc.precipitation_probability_max?.[i] ?? null,
     uvMax: dailySrc.uv_index_max?.[i] ?? null,
-    weatherCode: dailySrc.weathercode?.[i] ?? null,
+    weatherCode: dailySrc.weather_code?.[i] ?? dailySrc.weathercode?.[i] ?? null,
+
   }));
 
   const hourly = hourlyTimes.map((time, i) => ({
@@ -58,7 +59,8 @@ function mapWeatherToUI(api, location) {
         time: currentSrc.time ?? null,
         temp: currentSrc.temperature ?? currentSrc.temperature_2m ?? null,
         wind: currentSrc.windspeed ?? currentSrc.wind_speed_10m ?? null,
-        weatherCode: currentSrc.weathercode ?? null,
+        weatherCode: currentSrc.weather_code ?? currentSrc.weathercode ?? null,
+
       }
     : null;
 

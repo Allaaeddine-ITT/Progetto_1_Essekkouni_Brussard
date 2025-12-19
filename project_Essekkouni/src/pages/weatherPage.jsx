@@ -15,6 +15,8 @@ import HourlyForecastChart from "../components/hourlyforecastchart";
 import "../styles/palette.css";
 import "../styles/Weather.css";
 import "leaflet/dist/leaflet.css";
+import SideActions from "../components/sideaction";
+
 
 
 export default function WeatherPage() {
@@ -22,6 +24,7 @@ export default function WeatherPage() {
   const { weather, loading, error ,coords} = useWeather(city);
 
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+ 
 
   useEffect(() => {
     setSelectedDayIndex(0);
@@ -60,7 +63,13 @@ export default function WeatherPage() {
       </div>
 
       <div className="content-grid">
-        <div className="left-actions">SideActions</div>
+        <div className="left-actions">
+              <SideActions
+                onAddFavorite={() => console.log("add favorite")}
+                onOpenFavorites={() => console.log("open favorites")}
+              />
+</div>
+
         <div className="map">
           <CityMap city={city} coords={coords}> </CityMap>
         </div>

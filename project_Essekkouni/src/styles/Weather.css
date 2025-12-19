@@ -292,3 +292,17 @@ body {
   aspect-ratio: 1 / 1;
   height: auto;
 }
+.left-actions{
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+.left-actions > *{
+  width: 100%;
+  height: 100%;
+}
+.left-actions{
+  grid-column:1 ;
+  grid-row: 0;
+  height: 45%;
+}
