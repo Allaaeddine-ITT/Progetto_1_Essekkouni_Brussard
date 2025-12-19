@@ -1,0 +1,20 @@
+:root{
+  /* BACKGROUND */
+  --bg-main: #4b648a;          
+  --bg-card: #5f85c3;          
+  --bg-card-soft: #6e93cf;     
+  --bg-card-dark: #4f6fa3;     
+
+  /* TEXT */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.75);
+  --text-muted: rgba(255,255,255,0.55);
+
+  /* ACCENT */
+  --accent-yellow: #f6c64a;    
+  --accent-blue: #7fb2ff;
+
+  /* UI */
+  --border-radius-lg: 22px;
+  --border-radius-md: 14px;
+}
