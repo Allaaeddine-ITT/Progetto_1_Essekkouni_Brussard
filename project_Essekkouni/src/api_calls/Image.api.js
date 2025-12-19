@@ -31,6 +31,6 @@ export async function getCityImage(cityName) {
     return imageUrl || "/images/default.jpg";
   } catch (err) {
     console.error("Errore getCityImage:", err);
-    return "/images/default.jpg"; 
+    return "/images/default.jpg";
   }
 }
