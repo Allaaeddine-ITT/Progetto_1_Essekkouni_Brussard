@@ -2,7 +2,25 @@ import { useEffect, useState } from "react";
 import { getCityCoords } from "../api_calls/nominatim.api.js";
 import { getWeatherData } from "../api_calls/openMeteo.api.js";
 
-function mapWeatherToUI(api) {
+function normalizeCoords(city, cityCoords) {
+  if (!cityCoords) return null;
+
+  const lat = Number(cityCoords.lat);
+  const lon = Number(cityCoords.lon);
+
+  return {
+    lat: Number.isFinite(lat) ? lat : null,
+    lon: Number.isFinite(lon) ? lon : null,
+    name:
+      (typeof city === "string" && city) ||
+      cityCoords.name ||
+      cityCoords.display_name ||
+      null,
+    raw: cityCoords,
+  };
+}
+
+function mapWeatherToUI(api, location) {
   if (!api) return null;
 
   const dailySrc = api.daily ?? {};
@@ -14,22 +32,19 @@ function mapWeatherToUI(api) {
   const daily = dailyTimes.map((date, i) => ({
     date,
     max: dailySrc.temperature_2m_max?.[i] ?? null,
-    min: dailySrc.temperature_2m_min?.[i] ?? null,                 
-    windMax: dailySrc.wind_speed_10m_max?.[i] ?? null,              
+    min: dailySrc.temperature_2m_min?.[i] ?? null,
+    windMax: dailySrc.wind_speed_10m_max?.[i] ?? null,
     precipProb: dailySrc.precipitation_probability_max?.[i] ?? null,
     uvMax: dailySrc.uv_index_max?.[i] ?? null,
     weatherCode: dailySrc.weathercode?.[i] ?? null,
   }));
-  //console.log(windMax)
 
   const hourly = hourlyTimes.map((time, i) => ({
     time,
     temp: hourlySrc.temperature_2m?.[i] ?? null,
     precipProb: hourlySrc.precipitation_probability?.[i] ?? null,
     weatherCode:
-      hourlySrc.weathercode?.[i] ??
-      hourlySrc.weather_code?.[i] ??
-      null,
+      hourlySrc.weathercode?.[i] ?? hourlySrc.weather_code?.[i] ?? null,
     wind:
       hourlySrc.wind_speed_10m?.[i] ??
       hourlySrc.windspeed_10m?.[i] ??
@@ -47,11 +62,17 @@ function mapWeatherToUI(api) {
       }
     : null;
 
-  return { current, daily, hourly, _raw: api };
+  return {
+    location,        
+    current,
+    daily,
+    hourly,
+    _raw: api,
+  };
 }
 
 export default function useWeather(city) {
-  const [coords, setCoords] = useState(null);
+  const [coords, setCoords] = useState(null);  // { lat, lon, name, raw }
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -66,18 +87,24 @@ export default function useWeather(city) {
       setError(null);
 
       try {
-        const cityCoords =
+        const rawCoords =
           typeof city === "object" && city.lat != null && city.lon != null
             ? city
             : await getCityCoords(city);
 
         if (cancelled) return;
-        setCoords(cityCoords);
 
-        const weatherData = await getWeatherData(cityCoords.lat, cityCoords.lon);
+        const location = normalizeCoords(city, rawCoords);
+        setCoords(location);
+
+        const weatherData =
+          location?.lat != null && location?.lon != null
+            ? await getWeatherData(location.lat, location.lon)
+            : null;
+
         if (cancelled) return;
 
-        setWeather(mapWeatherToUI(weatherData));
+        setWeather(mapWeatherToUI(weatherData, location));
       } catch (err) {
         console.error(err);
         if (!cancelled) setError("Errore nel recupero dei dati meteo");

@@ -104,6 +104,7 @@ export default function WeeklyForecast({ weather, onSelectDay }) {
                 cursor: "pointer",
                 flex: 1,
                 minWidth: 0,
+               
                 borderRadius: 2,
                 px: 1,
                 py: 1,

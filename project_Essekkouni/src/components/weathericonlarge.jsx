@@ -17,12 +17,12 @@ export default function WeatherIconLarge({ weather }) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: 200,
+        height: 400,
       }}
     >
       <Icon
         sx={{
-          fontSize: 160, 
+          fontSize: 250, 
           color: "#f5c542", 
         }}
       />

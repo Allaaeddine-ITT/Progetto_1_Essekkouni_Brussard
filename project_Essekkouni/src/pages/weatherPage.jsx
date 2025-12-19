@@ -7,16 +7,19 @@ import WeatherCard from "../components/Weathercard";
 import WeeklyForecast from "../components/weeklyforecast";
 import AirConditions from "../components/airconditions";
 import WeatherIconLarge from "../components/weathericonlarge";
+import CityMap from "../components/citymap";
 
 import { getHoursForDay } from "../utils/hourlyutils";
 import HourlyForecastChart from "../components/hourlyforecastchart";
 
 import "../styles/palette.css";
 import "../styles/Weather.css";
+import "leaflet/dist/leaflet.css";
+
 
 export default function WeatherPage() {
   const [city, setCity] = useState(null);
-  const { weather, loading, error } = useWeather(city);
+  const { weather, loading, error ,coords} = useWeather(city);
 
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
 
@@ -58,7 +61,9 @@ export default function WeatherPage() {
 
       <div className="content-grid">
         <div className="left-actions">SideActions</div>
-        <div className="map">CityMap</div>
+        <div className="map">
+          <CityMap city={city} coords={coords}> </CityMap>
+        </div>
 
         <div className="center-icon">
           {weather && <WeatherIconLarge weather={weather} day={selectedDay} />}
