@@ -7,7 +7,7 @@ export default function AirConditions({ day }) {
   if (!day) return null;
 
   const { max, windMax, precipProb, uvMax } = day;
-
+    
   return (
     <Box
       sx={{
@@ -37,7 +37,7 @@ export default function AirConditions({ day }) {
         <Condition
           icon={<WbSunnyIcon />}
           label="Real Feel"
-          value={max != null ? `${Math.round(max)}°` : "--"}
+          value={max != null ? `${max}°` : "--"}
         />
 
         <Condition

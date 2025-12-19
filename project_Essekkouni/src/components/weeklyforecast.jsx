@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -8,40 +7,32 @@ import { getWeatherIcon } from "../utils/weathericon";
 const VISIBLE = 5;
 
 function toYMD(date) {
-  return date.toISOString().slice(0, 10); // "YYYY-MM-DD"
+  return date.toISOString().slice(0, 10);
 }
 
 function dayLabel(dateStr) {
- 
   const d = new Date(dateStr);
-  return d
-    .toLocaleDateString("en-GB", { weekday: "short" })
-    .toUpperCase();
+  return d.toLocaleDateString("en-GB", { weekday: "short" }).toUpperCase();
 }
 
 export default function WeeklyForecast({ weather, onSelectDay }) {
-  const daily = weather?.daily;
+  const dailyArr = weather?.daily;
 
+  
   const days = useMemo(() => {
-    if (!daily?.time) return [];
+    if (!Array.isArray(dailyArr) || dailyArr.length === 0) return [];
 
-    // nomi possibili nei daily 
-    const codes = daily.weathercode ?? daily.weather_code ?? [];
-    const tMax = daily.temperature_2m_max ?? daily.temperature_max ?? [];
-    const tMin = daily.temperature_2m_min ?? daily.temperature_min ?? [];
-
-    const len = Math.min(daily.time.length, codes.length || daily.time.length);
-
-    return Array.from({ length: len }, (_, i) => ({
-      date: daily.time[i],
-      label: dayLabel(daily.time[i]),
-      code: Number(codes[i]),
-      max: tMax[i],
-      min: tMin[i],
+    return dailyArr.map((d) => ({
+      date: d.date,
+      label: dayLabel(d.date),
+      code: Number(d.weatherCode),
+      max: d.max,
+      min: d.min,
+      wind: d.wind
+      
     }));
-  }, [daily]);
+  }, [dailyArr]);
 
-  // indice di oggi dentro daily.time → start da domani
   const todayIndex = useMemo(() => {
     if (!days.length) return 0;
     const todayStr = toYMD(new Date());
@@ -55,7 +46,6 @@ export default function WeeklyForecast({ weather, onSelectDay }) {
   const [startIndex, setStartIndex] = useState(minStart);
   const [selectedIndex, setSelectedIndex] = useState(todayIndex + 1);
 
-  // quando cambia città/meteo → reset finestra a domani
   useEffect(() => {
     setStartIndex(minStart);
     setSelectedIndex(todayIndex + 1);
@@ -75,21 +65,16 @@ export default function WeeklyForecast({ weather, onSelectDay }) {
 
   return (
     <Box
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    gap: 1,
-    width: "100%",
-
-   
-    borderTopLeftRadius: "var(--radius-lg)",
-    borderTopRightRadius: "var(--radius-lg)",
-
-   
-    overflow: "hidden",
-  }}
->
-
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        width: "100%",
+        borderTopLeftRadius: "var(--radius-lg)",
+        borderTopRightRadius: "var(--radius-lg)",
+        overflow: "hidden",
+      }}
+    >
       <IconButton onClick={handlePrev} disabled={!canPrev} size="small">
         <ChevronLeftIcon />
       </IconButton>
@@ -110,7 +95,7 @@ export default function WeeklyForecast({ weather, onSelectDay }) {
 
           return (
             <Box
-              key={d.date}
+              key={d.date ?? absoluteIndex}
               onClick={() => {
                 setSelectedIndex(absoluteIndex);
                 onSelectDay?.(absoluteIndex, d);
@@ -124,7 +109,9 @@ export default function WeeklyForecast({ weather, onSelectDay }) {
                 py: 1,
                 textAlign: "center",
                 userSelect: "none",
-                backgroundColor: isSelected ? "rgba(255,255,255,0.18)" : "transparent",
+                backgroundColor: isSelected
+                  ? "rgba(255,255,255,0.18)"
+                  : "transparent",
               }}
             >
               <Typography sx={{ fontSize: 12, opacity: 0.9, mb: 0.5 }}>
@@ -138,6 +125,7 @@ export default function WeeklyForecast({ weather, onSelectDay }) {
                   {d.max != null ? Math.round(Number(d.max)) : "--"}°
                   {" / "}
                   {d.min != null ? Math.round(Number(d.min)) : "--"}°
+                  
                 </Typography>
               )}
             </Box>

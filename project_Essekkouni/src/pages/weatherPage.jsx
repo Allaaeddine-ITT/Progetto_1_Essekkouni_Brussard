@@ -1,46 +1,42 @@
 // src/pages/WeatherPage.jsx
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useWeather from "../hooks/useweather";
+
 import SearchBox from "../components/SearchBox";
 import WeatherCard from "../components/Weathercard";
 import WeeklyForecast from "../components/weeklyforecast";
 import AirConditions from "../components/airconditions";
 import WeatherIconLarge from "../components/weathericonlarge";
-import "../styles/palette.css"
-import "../styles/Weather.css";
 
+import { getHoursForDay } from "../utils/hourlyutils";
+import HourlyForecastChart from "../components/hourlyforecastchart";
+
+import "../styles/palette.css";
+import "../styles/Weather.css";
 
 export default function WeatherPage() {
   const [city, setCity] = useState(null);
   const { weather, loading, error } = useWeather(city);
 
-  const [selectedDayIndex, setSelectedDayIndex] = useState(null);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+
+  useEffect(() => {
+    setSelectedDayIndex(0);
+  }, [city]);
 
   const selectedDay = useMemo(() => {
-    const d = weather?.daily;
-    if (!d?.time?.length) return null;
+    const days = weather?.daily;
+    if (!Array.isArray(days) || days.length === 0) return null;
 
-    const i = selectedDayIndex ?? 0;
+    const i = Math.min(Math.max(selectedDayIndex ?? 0, 0), days.length - 1);
+    return { ...days[i], index: i };
+  }, [weather?.daily, selectedDayIndex]);
 
-    const codes = d.weathercode ?? d.weather_code ?? [];
-    const tMax = d.temperature_2m_max ?? d.temperature_max ?? [];
-    const tMin = d.temperature_2m_min ?? d.temperature_min ?? [];
+  const hoursForSelectedDay = useMemo(() => {
+    return getHoursForDay(weather?.hourly, selectedDay?.date);
+  }, [weather?.hourly, selectedDay?.date]);
 
-    const windMax = d.windspeed_10m_max ?? d.wind_speed_10m_max ?? [];
-    const precipProb = d.precipitation_probability_max ?? [];
-    const uvMax = d.uv_index_max ?? [];
-
-    return {
-      index: i,
-      date: d.time[i],
-      code: Number(codes[i]),
-      max: tMax[i],
-      min: tMin[i],
-      windMax: windMax[i],
-      precipProb: precipProb[i],
-      uvMax: uvMax[i],
-    };
-  }, [weather, selectedDayIndex]);
+  const showPanelContent = !!city && !!weather && !loading && !error;
 
   return (
     <div className="weather-page">
@@ -65,10 +61,9 @@ export default function WeatherPage() {
         <div className="map">CityMap</div>
 
         <div className="center-icon">
-          {weather && <WeatherIconLarge weather={weather} />}
+          {weather && <WeatherIconLarge weather={weather} day={selectedDay} />}
         </div>
 
-        
         <div className="right-panel">
           {!city && <div className="panel-placeholder">Select a city</div>}
           {city && loading && <div className="panel-placeholder">Loading…</div>}
@@ -76,12 +71,13 @@ export default function WeatherPage() {
             <div className="panel-placeholder error">{error}</div>
           )}
 
-          {weather && !loading && !error && (
+          {showPanelContent && (
             <>
               <div className="weekly-strip">
                 <WeeklyForecast
                   weather={weather}
-                  onSelectDay={(index) => setSelectedDayIndex(index)}
+                  selectedIndex={selectedDayIndex}
+                  onSelectDay={setSelectedDayIndex}
                 />
               </div>
 
@@ -92,9 +88,12 @@ export default function WeatherPage() {
           )}
         </div>
 
-        
         <div className="bottom-24h">
-          <div className="chart-placeholder">24-hour forecast chart</div>
+          {!showPanelContent ? (
+            <div className="chart-placeholder">24-hour forecast</div>
+          ) : (
+            <HourlyForecastChart hours={hoursForSelectedDay} />
+          )}
         </div>
       </div>
     </div>

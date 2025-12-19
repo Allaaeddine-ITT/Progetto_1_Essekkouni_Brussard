@@ -1,5 +1,5 @@
 // src/components/WeatherCard.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, Box, Typography } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -28,8 +28,7 @@ export default function WeatherCard({ city, weather, loading = false }) {
       try {
         const url = await getCityImage(city.displayName);
         if (!cancelled) setImageUrl(url || "/images/default.jpg");
-      } catch (e) {
-        console.error("Image fetch error:", e);
+      } catch {
         if (!cancelled) setImageUrl("/images/default.jpg");
       }
     })();
@@ -39,7 +38,6 @@ export default function WeatherCard({ city, weather, loading = false }) {
     };
   }, [city]);
 
-  
   if (!city) return null;
 
   const cityLabel = (city.displayName || "").split(",")[0] || "City";
@@ -53,52 +51,34 @@ export default function WeatherCard({ city, weather, loading = false }) {
     });
   }, []);
 
-  const tempNum = useMemo(() => {
-    const candidates = [
-      weather?.current_weather?.temperature,
-      weather?.current?.temperature_2m,
-      weather?.current?.temperature,
-    ];
-    return candidates
-      .map((v) => (v == null ? NaN : Number(v)))
-      .find((n) => Number.isFinite(n));
-  }, [weather]);
+  // 🔑 NUOVO: lettura dal modello mappato
+  const temp = weather?.current?.temp;
+  const code = weather?.current?.weatherCode;
 
-  const code = useMemo(() => {
-    const candidates = [
-      weather?.current_weather?.weathercode,
-      weather?.current?.weather_code,
-      weather?.current?.weathercode,
-    ];
-    return candidates
-      .map((v) => (v == null ? NaN : Number(v)))
-      .find((n) => Number.isFinite(n));
-  }, [weather]);
-
-  const condition = Number.isFinite(code) ? codeToLabel(code) : "Weather";
+  const condition = Number.isFinite(code)
+    ? codeToLabel(code)
+    : "Weather";
 
   const tempText = loading
     ? "…"
-    : Number.isFinite(tempNum)
-      ? `${Math.round(tempNum)}°C`
-      : "--°C";
+    : Number.isFinite(temp)
+    ? `${Math.round(temp)}°C`
+    : "--°C";
 
   return (
-   <Card
-  className="hero-card"
-  sx={{
-    position: "relative",
-    width: "100%",
-    maxWidth: 860,
-    height: 280,
-    flexShrink: 0,   
-    minWidth: 520,   
-    borderRadius: 3,
-    overflow: "hidden",
-  }}
-  elevation={0}
->
-
+    <Card
+      className="hero-card"
+      sx={{
+        position: "relative",
+        width: "100%",
+        maxWidth: 860,
+        height: 280,
+        minWidth: 520,
+        borderRadius: 3,
+        overflow: "hidden",
+      }}
+      elevation={0}
+    >
       {/* Background image */}
       <Box
         sx={{
@@ -141,11 +121,15 @@ export default function WeatherCard({ city, weather, loading = false }) {
           <ChevronRightIcon sx={{ fontSize: 20, opacity: 0.9 }} />
         </Box>
 
-        <Typography sx={{ fontSize: 34, fontWeight: 700, lineHeight: 1.05, mt: 0.5 }}>
+        <Typography
+          sx={{ fontSize: 34, fontWeight: 700, lineHeight: 1.05, mt: 0.5 }}
+        >
           {condition}
         </Typography>
 
-        <Typography sx={{ fontSize: 64, fontWeight: 800, lineHeight: 1, mt: 1 }}>
+        <Typography
+          sx={{ fontSize: 64, fontWeight: 800, lineHeight: 1, mt: 1 }}
+        >
           {tempText}
         </Typography>
 
