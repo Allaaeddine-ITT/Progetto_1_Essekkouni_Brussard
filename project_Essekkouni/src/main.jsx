@@ -1,8 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.jsx'
-import Geodecode  from "./geocoding.js"
+import App from '../src/App.jsx'
 import Button from '@mui/material/Button';
 
 createRoot(document.getElementById('root')).render(
@@ -14,4 +13,4 @@ createRoot(document.getElementById('root')).render(
 
 
 )
-Geodecode();
+

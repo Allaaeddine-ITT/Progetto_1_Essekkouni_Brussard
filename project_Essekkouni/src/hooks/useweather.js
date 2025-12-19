@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getCityCoords } from "../api/nominatim.api.js";
-import { getWeatherData } from "../api/openMeteo.api.js";
+import { getCityCoords } from "../api_calls/nominatim.api.js";
+import { getWeatherData } from "../api_calls/openMeteo.api.js";
 
 export default function useWeather(city) {
   const [coords, setCoords] = useState(null);
@@ -16,19 +16,27 @@ export default function useWeather(city) {
       setError(null);
 
       try {
-    
-        const cityCoords = await getCityCoords(city);
-        setCoords(cityCoords);
+        let cityCoords;
 
         
+        if (typeof city === "object" && city.lat && city.lon) {
+          cityCoords = city;
+        } 
+        
+        else {
+          cityCoords = await getCityCoords(city);
+        }
+
+        setCoords(cityCoords);
         const weatherData = await getWeatherData(
           cityCoords.lat,
           cityCoords.lon
         );
+
         setWeather(weatherData);
       } catch (err) {
-        setError("Errore nel recupero dei dati meteo");
         console.error(err);
+        setError("Errore nel recupero dei dati meteo");
       } finally {
         setLoading(false);
       }

@@ -38,3 +38,4 @@ to provide:
 ###  Pagina Preferiti 
 
 * Saved City List
+*aggiunta  api per la gestione dinamica delle immaggini di una città , con unsplash *
