@@ -1,11 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-/**
- * hours: array di ore già “normalizzate”
- * [
- *   { time: "13:00", temp: 18.2, iconUrl: "...", precipProb: 25 }
- * ]
- */
+
 export default function HourlyForecast({ hours, title = "24-HOUR FORECAST" }) {
   if (!hours?.length) return null;
 

@@ -6,8 +6,17 @@ import WbSunnyIcon from "@mui/icons-material/WbSunny";
 export default function AirConditions({ day }) {
   if (!day) return null;
 
-  const { max, windMax, precipProb, uvMax } = day;
-    
+  const { max, precipProb, uvMax } = day;
+
+  
+  const wind =
+    day.windMax ??
+    day.wind ??
+    day.wind_speed_10m_max ??
+    day.windspeed_10m_max ??
+    day.windSpeedMax ??
+    null;
+
   return (
     <Box
       sx={{
@@ -27,29 +36,25 @@ export default function AirConditions({ day }) {
         AIR CONDITIONS
       </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Condition
           icon={<WbSunnyIcon />}
           label="Real Feel"
-          value={max != null ? `${max}°` : "--"}
+          value={max != null ? `${Math.round(Number(max))}°` : "--"}
         />
 
         <Condition
           icon={<AirIcon />}
           label="Wind"
-          value={windMax != null ? `${Math.round(windMax)} km/h` : "--"}
+          value={wind != null ? `${Math.round(Number(wind))} km/h` : "--"}
         />
 
         <Condition
           icon={<UmbrellaIcon />}
           label="Chance of rain"
-          value={precipProb != null ? `${Math.round(precipProb)}%` : "--"}
+          value={
+            precipProb != null ? `${Math.round(Number(precipProb))}%` : "--"
+          }
         />
 
         <Condition
@@ -64,30 +69,14 @@ export default function AirConditions({ day }) {
 
 function Condition({ icon, label, value }) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 1.5,
-      }}
-    >
-      <Box
-        sx={{
-          opacity: 0.8,
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+      <Box sx={{ opacity: 0.8, display: "flex", alignItems: "center" }}>
         {icon}
       </Box>
 
       <Box>
-        <Typography sx={{ fontSize: 12, opacity: 0.7 }}>
-          {label}
-        </Typography>
-        <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
-          {value}
-        </Typography>
+        <Typography sx={{ fontSize: 12, opacity: 0.7 }}>{label}</Typography>
+        <Typography sx={{ fontSize: 16, fontWeight: 600 }}>{value}</Typography>
       </Box>
     </Box>
   );

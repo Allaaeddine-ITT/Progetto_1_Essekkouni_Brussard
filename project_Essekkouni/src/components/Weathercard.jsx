@@ -1,4 +1,3 @@
-// src/components/WeatherCard.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Card, Box, Typography } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -16,17 +15,39 @@ function codeToLabel(code) {
   return "Weather";
 }
 
+function cityToText(city) {
+  if (!city) return "";
+  if (typeof city === "string") return city;
+
+  return (
+    city.displayName ||
+    city.name ||
+    city.display_name ||
+    city.label ||
+    city.title ||
+    ""
+  );
+}
+
+function shortCity(label) {
+  if (!label) return "City";
+  return String(label).split(",")[0].trim() || "City";
+}
+
 export default function WeatherCard({ city, weather, loading = false }) {
   const [imageUrl, setImageUrl] = useState("/images/default.jpg");
 
+  const cityText = cityToText(city);
+  const cityLabel = shortCity(cityText);
+
   useEffect(() => {
-    if (!city) return;
+    if (!cityText) return;
 
     let cancelled = false;
 
     (async () => {
       try {
-        const url = await getCityImage(city.displayName);
+        const url = await getCityImage(cityLabel);
         if (!cancelled) setImageUrl(url || "/images/default.jpg");
       } catch {
         if (!cancelled) setImageUrl("/images/default.jpg");
@@ -36,11 +57,9 @@ export default function WeatherCard({ city, weather, loading = false }) {
     return () => {
       cancelled = true;
     };
-  }, [city]);
+  }, [cityText, cityLabel]);
 
-  if (!city) return null;
-
-  const cityLabel = (city.displayName || "").split(",")[0] || "City";
+  if (!cityText) return null;
 
   const dateText = useMemo(() => {
     return new Date().toLocaleDateString("en-GB", {
@@ -51,13 +70,10 @@ export default function WeatherCard({ city, weather, loading = false }) {
     });
   }, []);
 
-  // 🔑 NUOVO: lettura dal modello mappato
   const temp = weather?.current?.temp;
   const code = weather?.current?.weatherCode;
 
-  const condition = Number.isFinite(code)
-    ? codeToLabel(code)
-    : "Weather";
+  const condition = Number.isFinite(code) ? codeToLabel(code) : "Weather";
 
   const tempText = loading
     ? "…"
@@ -72,10 +88,13 @@ export default function WeatherCard({ city, weather, loading = false }) {
         position: "relative",
         width: "100%",
         maxWidth: 860,
-        height: 280,
-        minWidth: 520,
+
+        // ✅ responsive height
+        height: { xs: 220, sm: 250, md: 280 },
+
         borderRadius: 3,
         overflow: "hidden",
+        minWidth: 0,
       }}
       elevation={0}
     >
@@ -106,29 +125,53 @@ export default function WeatherCard({ city, weather, loading = false }) {
         sx={{
           position: "absolute",
           inset: 0,
-          p: 2.5,
+
+          // ✅ responsive padding
+          p: { xs: 2, sm: 2.5 },
+
           color: "#fff",
           display: "flex",
           flexDirection: "column",
           gap: 1,
+          minWidth: 0,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
           <LocationOnIcon sx={{ fontSize: 18, opacity: 0.95 }} />
-          <Typography sx={{ fontSize: 14, fontWeight: 600, opacity: 0.95 }}>
+          <Typography
+            sx={{
+              fontSize: 14,
+              fontWeight: 600,
+              opacity: 0.95,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: { xs: 220, sm: 320, md: 420 },
+            }}
+          >
             {cityLabel}
           </Typography>
           <ChevronRightIcon sx={{ fontSize: 20, opacity: 0.9 }} />
         </Box>
 
         <Typography
-          sx={{ fontSize: 34, fontWeight: 700, lineHeight: 1.05, mt: 0.5 }}
+          sx={{
+            fontSize: { xs: 26, sm: 32, md: 34 },
+            fontWeight: 700,
+            lineHeight: 1.05,
+            mt: 0.5,
+          }}
         >
           {condition}
         </Typography>
 
         <Typography
-          sx={{ fontSize: 64, fontWeight: 800, lineHeight: 1, mt: 1 }}
+          sx={{
+            fontSize: { xs: 48, sm: 58, md: 64 },
+            fontWeight: 800,
+            lineHeight: 1,
+            mt: { xs: 0.5, sm: 1 },
+          }}
         >
           {tempText}
         </Typography>

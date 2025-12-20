@@ -4,7 +4,7 @@ import { getWeatherIcon } from "../utils/weathericon";
 export default function WeatherIconLarge({ weather }) {
   if (!weather?.current) return null;
 
-  // ⚠️ prende il codice GIUSTO creato dal tuo hook
+  
   const code = weather.current.weatherCode;
 
   const Icon = getWeatherIcon(code);
@@ -15,12 +15,12 @@ export default function WeatherIconLarge({ weather }) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: 400,
+        height: {xs:100,sm:260,md:400},
       }}
     >
       <Icon
         sx={{
-          fontSize: 250,
+          fontSize:{xs:140,sm:200,md:250},
           color: "#ffffffff",
         }}
       />

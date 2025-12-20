@@ -16,7 +16,7 @@ function Recenter({ lat, lon, zoom = 12 }) {
   useEffect(() => {
     if (lat == null || lon == null) return;
     map.setView([lat, lon], zoom, { animate: true });
-    setTimeout(() => map.invalidateSize(), 0); // ✅ evita render “strano” dopo resize
+    setTimeout(() => map.invalidateSize(), 0); 
   }, [lat, lon, zoom, map]);
   return null;
 }
@@ -59,7 +59,7 @@ export default function CityMap({ city, coords }) {
           center={center}
           zoom={12}
           scrollWheelZoom={false}
-          zoomControl={false}          // ✅ come mockup
+          zoomControl={false}          
           style={{ height: "100%", width: "100%" }}
         >
           <TileLayer

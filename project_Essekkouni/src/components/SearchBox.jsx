@@ -1,4 +1,4 @@
-// src/components/SearchBox.jsx
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
@@ -20,7 +20,7 @@ export default function SearchBox({ onSelectCity }) {
 
   const rootRef = useRef(null);
 
-  // Close dropdown on outside click
+  
   useEffect(() => {
     function onDocMouseDown(e) {
       if (!rootRef.current) return;
@@ -69,7 +69,7 @@ export default function SearchBox({ onSelectCity }) {
   }, [loading]);
 
   return (
-    <Box ref={rootRef} sx={{ width: 360, position: "relative" }}>
+    <Box ref={rootRef} sx={{ maxWidth: 360, position: "relative" , width:"100%"}}>
       <TextField
         fullWidth
         value={query}
